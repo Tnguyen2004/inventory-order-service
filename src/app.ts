@@ -1,6 +1,7 @@
 import express from 'express';
 import { prisma } from './prisma';
 import productRoutes from './routes/products.routes';
+import orderRoutes from './routes/orders.routes';
 
 // Initialize Express app
 const app = express();
@@ -22,6 +23,9 @@ app.get('/health/db', async (req, res) => {
 
 // Use product routes
 app.use('/api', productRoutes);
+
+// Use order routes
+app.use('/api', orderRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
