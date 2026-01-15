@@ -31,7 +31,10 @@ export async function createProduct(req: Request, res: Response) {
 
         res.status(201).json(newProduct);
     } catch (error) {
-        return res.status(500).json({ error: 'Failed to create product.' });
+        return res.status(500).json({ 
+            error: 'Failed to create product.',
+            details: error instanceof Error ? error.message : error
+        });
     }
 }
 
@@ -46,7 +49,10 @@ export async function getProducts(req: Request, res: Response) {
 
         res.status(200).json(products);
     } catch (error) {
-        return res.status(500).json({ error: 'Failed to retrieve products.' });
+        return res.status(500).json({
+            error: 'Failed to retrieve products.',
+            details: error instanceof Error ? error.message : error
+        });
     }
 }
 
@@ -73,6 +79,9 @@ export async function getProductById(req: Request, res: Response) {
 
         res.status(200).json(product);
     } catch (error) {
-        return res.status(500).json({ Error: 'Failed to retrieve product.' });
+        return res.status(500).json({ 
+            error: 'Failed to retrieve product.',
+            details: error instanceof Error ? error.message : error
+        });
     }
 }

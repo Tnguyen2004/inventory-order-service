@@ -54,6 +54,9 @@ export async function createOrder(req: Request, res: Response) {
 
         res.status(201).json(newOrder);
     } catch (error) {
-        res.status(500).json({ error: "An error occurred while creating the order.", details: error });
+        res.status(500).json({ 
+            error: "Failed to create order", 
+            details: error instanceof Error ? error.message : error
+        });
     }
 }
