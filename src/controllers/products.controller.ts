@@ -38,6 +38,7 @@ export async function createProduct(req: Request, res: Response) {
 
 // Controller to get all products
 export async function getProducts(req: Request, res: Response) {
+    // Pagination parameters
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
 
@@ -45,9 +46,11 @@ export async function getProducts(req: Request, res: Response) {
         return res.status(400).json({ error: 'Page and limit must be positive integers.' });
     }
 
+    // Calculate the number of items to skip
     const skip = (page - 1) * limit;
 
     try {
+        // Retrieve products with pagination
         const [products, total] = await Promise.all([
             prisma.product.findMany({
                 skip,
@@ -57,7 +60,7 @@ export async function getProducts(req: Request, res: Response) {
             prisma.product.count(),
         ]);
 
-
+        // Send response with products and pagination metadata
         res.status(200).json({
             data: products,
             meta: {
