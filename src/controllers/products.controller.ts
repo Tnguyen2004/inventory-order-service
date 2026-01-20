@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
-import { prisma } from '../prisma';
+import {
+    createProduct as createProductService,
+    getProducts as getProductsService,
+    getProductById as getProductByIdService,
+} from '../services/product.service';
 
 // Controller to create a new product
 export async function createProduct(req: Request, res: Response) {
@@ -7,7 +11,7 @@ export async function createProduct(req: Request, res: Response) {
     const { name, price, stock } = req.body;
 
     // Input validation
-    if (!name || price == null || stock == null) {
+    if (!name || price == undefined || stock == undefined) {
         return res.status(400).json({ error: 'Name, price, and stock are required.' });
     }
 
@@ -21,13 +25,7 @@ export async function createProduct(req: Request, res: Response) {
 
     // Create the new product in the database
     try {
-        const newProduct = await prisma.product.create({
-            data: {
-                name,
-                price,
-                stock,
-            },
-        });
+        const newProduct = await createProductService(name, price, stock);
 
         res.status(201).json(newProduct);
     } catch (error) {
@@ -46,19 +44,9 @@ export async function getProducts(req: Request, res: Response) {
         return res.status(400).json({ error: 'Page and limit must be positive integers.' });
     }
 
-    // Calculate the number of items to skip
-    const skip = (page - 1) * limit;
-
     try {
         // Retrieve products with pagination
-        const [products, total] = await Promise.all([
-            prisma.product.findMany({
-                skip,
-                take: limit,
-                orderBy: { id: 'asc' },
-            }),
-            prisma.product.count(),
-        ]);
+        const { products, total } = await getProductsService(page, limit);
 
         // Send response with products and pagination metadata
         res.status(200).json({
@@ -80,18 +68,12 @@ export async function getProducts(req: Request, res: Response) {
 export async function getProductById(req: Request, res: Response) {
     const id = Number(req.params.id);
 
-    if (isNaN(id)) {
+    if (isNaN(id) || id <= 0) {
         return res.status(400).json({ error: 'Invalid product ID.' });
     }
 
-    if (id <= 0) {
-        return res.status(400).json({ error: 'Product ID must be a positive integer.' });
-    }
-
     try {
-        const product = await prisma.product.findUnique({
-            where: { id },
-        })
+        const product = await getProductByIdService(id);
 
         if (!product) {
             return res.status(404).json({ error: 'Product not found.' });
