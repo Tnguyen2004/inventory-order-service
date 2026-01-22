@@ -3,6 +3,9 @@ import {
     createOrder as createOrderService,
     getOrderById as getOrderByIdService,
 } from "../services/order.service";
+import {
+    isPositiveInt,
+} from "../utils/validation";
 
 export async function createOrder(req: Request, res: Response) {
     const orderItems = req.body.items;
@@ -14,9 +17,8 @@ export async function createOrder(req: Request, res: Response) {
     // Validate each order item
     for (const item of orderItems) {
         if (
-            !item.productId ||
-            !item.quantity ||
-            item.quantity < 1
+            !isPositiveInt(item.productId) ||
+            !isPositiveInt(item.quantity)
         ) {
             return res.status(400).json({ error: "Each order item must have a valid productId and quantity." });
         }

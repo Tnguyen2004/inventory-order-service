@@ -4,6 +4,11 @@ import {
     getProducts as getProductsService,
     getProductById as getProductByIdService,
 } from '../services/product.service';
+import {
+    isNonEmptyString,
+    isNonNegativeNumber,
+    isPositiveInt,
+} from '../utils/validation';
 
 // Controller to create a new product
 export async function createProduct(req: Request, res: Response) {
@@ -11,16 +16,14 @@ export async function createProduct(req: Request, res: Response) {
     const { name, price, stock } = req.body;
 
     // Input validation
-    if (!name || price == undefined || stock == undefined) {
-        return res.status(400).json({ error: 'Name, price, and stock are required.' });
+    if (!isNonEmptyString(name)) {
+        return res.status(400).json({ error: 'Product name must be a non-empty string.' });
     }
-
-    if (typeof price !== 'number' || typeof stock !== 'number') {
-        return res.status(400).json({ error: 'Price and stock must be numbers.' });
+    if (!isNonNegativeNumber(price)) {
+        return res.status(400).json({ error: 'Product price must be a non-negative number.' });
     }
-
-    if (price < 0 || stock < 0) {
-        return res.status(400).json({ error: 'Price and stock must be non-negative.' });
+    if (!isNonNegativeNumber(stock)) {
+        return res.status(400).json({ error: 'Product stock must be a non-negative number.' });
     }
 
     // Create the new product in the database
@@ -37,11 +40,13 @@ export async function createProduct(req: Request, res: Response) {
 // Controller to get all products
 export async function getProducts(req: Request, res: Response) {
     // Pagination parameters
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
 
-    if (page <= 0 || limit <= 0) {
-        return res.status(400).json({ error: 'Page and limit must be positive integers.' });
+    if (!isPositiveInt(page) || !isPositiveInt(limit)) {
+        return res.status(400).json({
+            error: "page and limit must be positive integers",
+        });
     }
 
     try {
