@@ -9,6 +9,7 @@ import {
     isNonNegativeNumber,
     isPositiveInt,
 } from '../utils/validation';
+import { logger } from '../config/logger';
 
 // Controller to create a new product
 export async function createProduct(req: Request, res: Response) {
@@ -32,7 +33,7 @@ export async function createProduct(req: Request, res: Response) {
 
         res.status(201).json(newProduct);
     } catch (error) {
-        console.error("Error creating product:", error instanceof Error ? error.message : error);
+        logger.error(`Error creating product: ${error instanceof Error ? error.message : error}`);
         return res.status(500).json({ error: 'Failed to create product.' });
     }
 }
@@ -64,7 +65,7 @@ export async function getProducts(req: Request, res: Response) {
             },
         });
     } catch (error) {
-        console.error("Error retrieving products:", error instanceof Error ? error.message : error);
+        logger.error(`Error retrieving products: ${error instanceof Error ? error.message : error}`);
         return res.status(500).json({ error: 'Failed to retrieve products.' });
     }
 }
@@ -86,7 +87,7 @@ export async function getProductById(req: Request, res: Response) {
 
         res.status(200).json(product);
     } catch (error) {
-        console.error("Error retrieving product:", error instanceof Error ? error.message : error);
+        logger.error(`Error retrieving product: ${error instanceof Error ? error.message : error}`);
         return res.status(500).json({ error: 'Failed to retrieve product.' });
     }
 }

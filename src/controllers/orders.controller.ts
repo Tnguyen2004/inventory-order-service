@@ -6,6 +6,7 @@ import {
 import {
     isPositiveInt,
 } from "../utils/validation";
+import { logger } from "../config/logger";
 
 export async function createOrder(req: Request, res: Response) {
     const orderItems = req.body.items;
@@ -29,7 +30,7 @@ export async function createOrder(req: Request, res: Response) {
 
         res.status(201).json(newOrder);
     } catch (error) {
-        console.error("Error creating order:", error instanceof Error ? error.message : error);
+        logger.error(`Error creating order: ${error instanceof Error ? error.message : error}`);    
         res.status(500).json({ error: "Failed to create order" });
     }
 }
@@ -52,7 +53,7 @@ export const getOrderById = async (req: Request, res: Response) => {
 
         res.status(200).json({ ...order, total });
     } catch (error) {
-        console.error("Error fetching order:", error instanceof Error ? error.message : error);
+        logger.error(`Error fetching order: ${error instanceof Error ? error.message : error}`);
         res.status(500).json({ error: "Failed to fetch order" });
     }
 }
