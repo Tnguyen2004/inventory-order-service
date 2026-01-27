@@ -3,7 +3,7 @@ import { prisma } from './prisma';
 import productRoutes from './routes/products.routes';
 import orderRoutes from './routes/orders.routes';
 import { logger } from './config/logger';
-import { requestLogger } from './middleware/requestlogger';
+import { requestLogger } from './middleware/requestLogger';
 
 // Initialize Express app
 const app = express();
